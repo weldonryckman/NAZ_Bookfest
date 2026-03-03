@@ -191,6 +191,11 @@ $(window).on('load', function() {
     `;
 
     // Add each layer as a list item
+    if (window.innerWidth <= 768) {
+      var collapseElement = document.getElementById('pointsLegendBody');
+      var bsCollapse = new bootstrap.Collapse(collapseElement, { toggle: false });
+      bsCollapse.hide(); // collapse legend on mobile by default
+    }
     Object.keys(layers).forEach(function(g) {
       var color = group2color[g];
       var iconHTML = color.indexOf('.') > 0
