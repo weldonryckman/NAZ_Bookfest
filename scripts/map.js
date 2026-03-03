@@ -177,12 +177,40 @@ $(window).on('load', function() {
       }
     }
 
-    $('#points-legend').prepend('<h6 class="pointer">' + getSetting('_pointsLegendTitle') + '</h6>');
-    if (getSetting('_pointsLegendIcon') != '') {
-      $('#points-legend h6').prepend('<span class="legend-icon"><i class="fas '
-        + getSetting('_pointsLegendIcon') + '"></i></span>');
-    }
+    // Build a Bootstrap card with collapsible body
+    var cardHTML = `
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        ${getSetting('_pointsLegendTitle')}
+        <button class="btn btn-sm btn-link d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#pointsLegendBody" aria-expanded="false" aria-controls="pointsLegendBody">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+      <div id="pointsLegendBody" class="collapse show">
+        <ul class="list-group list-group-flush">
+    `;
 
+    // Add each layer as a list item
+    Object.keys(layers).forEach(function(g) {
+      var color = group2color[g];
+      var iconHTML = color.indexOf('.') > 0
+        ? '<img src="' + color + '" class="markers-legend-icon">'
+        : '<i class="fas fa-map-marker" style="color:' + color + '"></i>';
+
+      cardHTML += `<li class="list-group-item">${iconHTML} ${g}</li>`;
+    });
+
+    cardHTML += `
+        </ul>
+      </div>
+    </div>
+    `;
+
+    // Inject the new legend into the Leaflet control container
+    $('#points-legend').html(cardHTML);
+
+
+    
     var displayTable = getSetting('_displayTable') == 'on' ? true : false;
 
     // Display table with active points if specified
