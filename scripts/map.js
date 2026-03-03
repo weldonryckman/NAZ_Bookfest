@@ -212,7 +212,13 @@ $(window).on('load', function() {
     `;
 
     // Inject the new legend into the Leaflet control container
-    $('#points-legend').html(cardHTML);
+   if (window.innerWidth <= 768) {
+      // Mobile: append to map div outside Leaflet controls
+      $('#map').prepend(cardHTML);
+    } else {
+      // Desktop: keep in Leaflet top-left control
+      $('#points-legend').html(cardHTML);
+    }
 
 
     
