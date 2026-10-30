@@ -931,20 +931,25 @@ $(window).on('load', function() {
   }
 
 
-  function addBaseMap() {
-    // Fallback to 'CartoDB.Positron' if no custom tile provider is set
+    function addBaseMap() {
+    // Look for the exact rows present in your spreadsheet columns
     var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
-    var apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
+    
+    // Look up both potential spreadsheet names to ensure it catches your API key safely
+    var apiKey = trySetting('Basemap Tiles API Key', '');
+    if (apiKey === '') {
+      apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
+    }
 
     // Force check if using a CARTO provider
     if (basemap.toLowerCase().includes('cartodb') || basemap.toLowerCase().includes('carto')) {
-      // Map configurations to CARTO's new direct directory structures
-      var variant = 'positron'; // Default fallback
+      // Map configurations to CARTO's new directory structures
+      var variant = 'positron';
       if (basemap.includes('DarkMatter')) variant = 'darkmatter';
       if (basemap.includes('Voyager')) variant = 'voyager';
 
-      // Load raster tiles directly via standard Leaflet layout using the new endpoint format
-      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
+      // Load raster tiles directly via standard Leaflet layout using the clean endpoint format
+      L.tileLayer('https://cartocdn.com' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
         maxZoom: 20,
         attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
       }).addTo(map);
