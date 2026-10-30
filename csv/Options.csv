@@ -10,7 +10,7 @@ Author Code Credit,,"Appears in credits as ""...code by..."" (or leave blank)"
 Google Analytics Tracking ID,,General format: UA-5488840-29
 Map Settings,,"For help, see tutorial in HandsOnDataViz.org"
 Basemap Tiles,CartoDB.Positron,"Select basemap. For Stadia tiles, add domain-based authentication."
-Basemap Tiles API Key,,"If required, insert an API key for tiles. See Stadia note above."
+Basemap Tiles API Key,cb1_4ynh_1_d7ac7aec82c6a44003a56b3d,"If required, insert an API key for tiles. See Stadia note above."
 Cluster Markers,on,"Display tightly-packed groups of markers as numbers, until zoomed in to view details."
 Intro Popup Text,,Show intro text pop-up on startup (or leave blank)
 Initial Zoom,7,Leave blank to auto-zoom to display all markers (or insert number between 1 [zoomed out] and 18 [zoomed in])
