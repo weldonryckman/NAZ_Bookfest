@@ -930,46 +930,43 @@ $(window).on('load', function() {
     $('.leaflet-control-attribution')[0].innerHTML = credit + attributionHTML;
   }
 
-   function addBaseMap() {
-    // Look for the exact rows present in your spreadsheet columns
-    var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
+  function addBaseMap() {
+    // 1. Pull the short text word from your CSV ("CartoDB.Positron" or "CartoDB.Voyager")
+    var basemap = trySetting('Basemap Tiles', 'CartoDB.Positron');
     
-    // Look up both potential spreadsheet names to ensure it catches your API key safely
-    var apiKey = trySetting('Basemap Tiles API Key', '');
-    if (apiKey === '') {
-      apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
-    }
+    // 2. Safely grab your API key from the CSV column
+    var apiKey = trySetting('Basemap Tiles API Key', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
 
-    // Force check if using a CARTO provider
+    // 3. Translate the choice into the exact URL directory CARTO uses
     if (basemap.toLowerCase().includes('cartodb') || basemap.toLowerCase().includes('carto')) {
-      // Map variants to CARTO's true production server directories
-      var variant = 'light_all'; // Positron endpoint path
-      if (basemap.includes('DarkMatter')) variant = 'dark_all'; // Dark Matter endpoint path
-      if (basemap.includes('Voyager')) variant = 'voyager'; // Voyager endpoint path
+      var variant = 'light_all'; // Default fallback path for Positron
+      
+      if (basemap.toLowerCase().includes('darkmatter')) {
+        variant = 'dark_all';
+      } else if (basemap.toLowerCase().includes('voyager')) {
+        variant = 'voyager';
+      }
 
-      // Load raster tiles directly via standard Leaflet layout using the corrected endpoint format
-      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
+      // 4. Inject variables smoothly into Leaflet
+      L.tileLayer('https://cartocdn.com' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
         maxZoom: 20,
         attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
       }).addTo(map);
 
     } else {
-      // Legacy fallback for non-CARTO providers (OpenStreetMap, Stadia, etc.)
+      // Fallback method for default/other standard tiles
       L.tileLayer.provider(basemap, {
         maxZoom: 18,
-        apiKey: apiKey,
-        apikey: apiKey,
-        key: apiKey,
-        accessToken: apiKey
+        apiKey: apiKey
       }).addTo(map);
     }
 
-    // Add the attribution control safely
+    // Handle attribution positioning safely
     L.control.attribution({
-      position: trySetting('_mapAttribution', 'bottomright')
+      position: trySetting('Credits and Attribution', 'bottomright')
     }).addTo(map);
   }
-
+ 
 
   /**
    * Returns the value of a setting s
