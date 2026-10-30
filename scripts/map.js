@@ -931,28 +931,41 @@ $(window).on('load', function() {
   }
 
 
-  /**
-   * Loads the basemap and adds it to the map
-   */
   function addBaseMap() {
-  // Fallback to 'CartoDB.Positron' if no custom tile provider is set
-  var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
-  var apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
+    // Fallback to 'CartoDB.Positron' if no custom tile provider is set
+    var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
+    var apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
 
-  L.tileLayer.provider(basemap, {
-    maxZoom: 18,
-    // Pass the key to the standardized parameters used by Leaflet-providers
-    apiKey: apiKey,
-    apikey: apiKey,
-    key: apiKey,
-    accessToken: apiKey
-  }).addTo(map);
+    // Force check if using a CARTO provider
+    if (basemap.toLowerCase().includes('cartodb') || basemap.toLowerCase().includes('carto')) {
+      // Map configurations to CARTO's new direct directory structures
+      var variant = 'positron'; // Default fallback
+      if (basemap.includes('DarkMatter')) variant = 'darkmatter';
+      if (basemap.includes('Voyager')) variant = 'voyager';
 
-  // Add the attribution control safely
-  L.control.attribution({
-    position: trySetting('_mapAttribution', 'bottomright')
-  }).addTo(map);
-}
+      // Load raster tiles directly via standard Leaflet layout using the new endpoint format
+      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
+      }).addTo(map);
+
+    } else {
+      // Legacy fallback for non-CARTO providers (OpenStreetMap, Stadia, etc.)
+      L.tileLayer.provider(basemap, {
+        maxZoom: 18,
+        apiKey: apiKey,
+        apikey: apiKey,
+        key: apiKey,
+        accessToken: apiKey
+      }).addTo(map);
+    }
+
+    // Add the attribution control safely
+    L.control.attribution({
+      position: trySetting('_mapAttribution', 'bottomright')
+    }).addTo(map);
+  }
+
 
 
   /**
