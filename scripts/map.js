@@ -930,8 +930,7 @@ $(window).on('load', function() {
     $('.leaflet-control-attribution')[0].innerHTML = credit + attributionHTML;
   }
 
-
-    function addBaseMap() {
+  function addBaseMap() {
     // Look for the exact rows present in your spreadsheet columns
     var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
     
@@ -943,13 +942,13 @@ $(window).on('load', function() {
 
     // Force check if using a CARTO provider
     if (basemap.toLowerCase().includes('cartodb') || basemap.toLowerCase().includes('carto')) {
-      // Map configurations to CARTO's new directory structures
-      var variant = 'positron';
-      if (basemap.includes('DarkMatter')) variant = 'darkmatter';
-      if (basemap.includes('Voyager')) variant = 'voyager';
+      // Map variants to CARTO's exact active server directory structures
+      var variant = 'light_all'; // Positron endpoint name
+      if (basemap.includes('DarkMatter')) variant = 'dark_all'; // Dark Matter endpoint name
+      if (basemap.includes('Voyager')) variant = 'voyager'; // Voyager endpoint name
 
       // Load raster tiles directly via standard Leaflet layout using the clean endpoint format
-      L.tileLayer('https://cartocdn.com' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
+      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
         maxZoom: 20,
         attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
       }).addTo(map);
@@ -970,6 +969,7 @@ $(window).on('load', function() {
       position: trySetting('_mapAttribution', 'bottomright')
     }).addTo(map);
   }
+
 
 
 
