@@ -935,24 +935,25 @@ $(window).on('load', function() {
    * Loads the basemap and adds it to the map
    */
   function addBaseMap() {
+  // Fallback to 'CartoDB.Positron' if no custom tile provider is set
+  var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
+  var apiKey = trySetting('_tileProviderApiKey', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
 
-    var basemap = trySetting('_tileProvider', 'CartoDB.Positron');
-    
-    L.tileLayer.provider(basemap, {
-      maxZoom: 18,
+  L.tileLayer.provider(basemap, {
+    maxZoom: 18,
+    // Pass the key to the standardized parameters used by Leaflet-providers
+    apiKey: apiKey,
+    apikey: apiKey,
+    key: apiKey,
+    accessToken: apiKey
+  }).addTo(map);
 
-      // Pass the api key to most commonly used parameters
-      apiKey: trySetting('_tileProviderApiKey', ''),
-      apikey: trySetting('_tileProviderApiKey', ''),
-      key: trySetting('_tileProviderApiKey', ''),
-      accessToken: trySetting('_tileProviderApiKey', '')
-    }).addTo(map);
+  // Add the attribution control safely
+  L.control.attribution({
+    position: trySetting('_mapAttribution', 'bottomright')
+  }).addTo(map);
+}
 
-    L.control.attribution({
-      position: trySetting('_mapAttribution', 'bottomright')
-    }).addTo(map);
-
-  }
 
   /**
    * Returns the value of a setting s
