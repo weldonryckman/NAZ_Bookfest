@@ -929,44 +929,47 @@ $(window).on('load', function() {
     credit += ' with ';
     $('.leaflet-control-attribution')[0].innerHTML = credit + attributionHTML;
   }
-
-  function addBaseMap() {
-    // 1. Pull the short text word from your CSV ("CartoDB.Positron" or "CartoDB.Voyager")
+  
+ function addBaseMap() {
+    // 1. Pull settings safely matching your spreadsheet layout names
     var basemap = trySetting('Basemap Tiles', 'CartoDB.Positron');
-    
-    // 2. Safely grab your API key from the CSV column
     var apiKey = trySetting('Basemap Tiles API Key', 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d');
 
-    // 3. Translate the choice into the exact URL directory CARTO uses
+    // 2. Clean fallback if the key string is pulled blank or whitespace from the sheet
+    if (!apiKey || apiKey.trim() === '') {
+      apiKey = 'cb1_4ynh_1_d7ac7aec82c6a44003a56b3d';
+    }
+
+    // 3. Map choices directly onto CARTO's production raster directories
     if (basemap.toLowerCase().includes('cartodb') || basemap.toLowerCase().includes('carto')) {
-      var variant = 'light_all'; // Default fallback path for Positron
+      var variant = 'positron'; // The verified production name for Positron
       
       if (basemap.toLowerCase().includes('darkmatter')) {
-        variant = 'dark_all';
+        variant = 'darkmatter';
       } else if (basemap.toLowerCase().includes('voyager')) {
         variant = 'voyager';
       }
 
-      // 4. Inject variables smoothly into Leaflet
+      // 4. Inject into Leaflet standard layer logic using the exact URL string
       L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
         maxZoom: 20,
-        attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
+        minZoom: 1,
+        attribution: '&copy; <a href="https://openstreetmap.org" target="_blank">OpenStreetMap</a> contributors &copy; <a href="https://carto.com" target="_blank">CARTO</a>'
       }).addTo(map);
 
     } else {
-      // Fallback method for default/other standard tiles
+      // Standard Leaflet-providers fallback logic for default maps (OSM, etc)
       L.tileLayer.provider(basemap, {
         maxZoom: 18,
         apiKey: apiKey
       }).addTo(map);
     }
 
-    // Handle attribution positioning safely
+    // Process bottom attribution controls safely matching your layout columns
     L.control.attribution({
       position: trySetting('Credits and Attribution', 'bottomright')
     }).addTo(map);
   }
- 
 
   /**
    * Returns the value of a setting s
