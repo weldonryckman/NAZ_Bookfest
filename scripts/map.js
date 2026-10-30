@@ -948,7 +948,7 @@ $(window).on('load', function() {
       }
 
       // 4. Inject variables smoothly into Leaflet
-      L.tileLayer('https://cartocdn.com' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
+      L.tileLayer('https://basemaps.cartocdn.com/rastertiles/' + variant + '/{z}/{x}/{y}.png?key=' + apiKey, {
         maxZoom: 20,
         attribution: '&copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors &copy; <a href="https://carto.com">CARTO</a>'
       }).addTo(map);
